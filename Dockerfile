@@ -10,7 +10,5 @@ RUN apk --no-cache add ffmpeg
 WORKDIR /app
 COPY . .
 RUN pip install -r requirements.txt --no-cache-dir
-# Expose the port the app runs on
-EXPOSE 5000
 
 CMD ["python", "bot/main.py"]
