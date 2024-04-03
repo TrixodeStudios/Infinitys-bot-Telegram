@@ -5,6 +5,8 @@ import logging
 import os
 import io
 
+import aiohttp
+
 from uuid import uuid4
 from telegram import BotCommandScopeAllGroupChats, Update, constants
 from telegram import InlineKeyboardMarkup, InlineKeyboardButton, InlineQueryResultArticle
@@ -29,6 +31,8 @@ class ChatGPTTelegramBot:
     Class representing a ChatGPT Telegram Bot.
     """
 
+ 
+
     def __init__(self, config: dict, openai: OpenAIHelper):
         """
         Initializes the bot with the given configuration and GPT bot object.
@@ -43,6 +47,7 @@ class ChatGPTTelegramBot:
             BotCommand(command='reset', description=localized_text('reset_description', bot_language)),
             BotCommand(command='stats', description=localized_text('stats_description', bot_language)),
             BotCommand(command='resend', description=localized_text('resend_description', bot_language))
+            
         ]
         # If imaging is enabled, add the "image" command to the list
         if self.config.get('enable_image_generation', False):
@@ -644,9 +649,39 @@ class ChatGPTTelegramBot:
         await wrap_with_indicator(update, context, _execute, constants.ChatAction.TYPING)
 
     async def prompt(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        user_message = update.message.text  # The message from the user
+        # Assume bot_response is populated with the response from your OpenAI logic
+        bot_response = await self.openai.get_chat_response(update.effective_chat.id, user_message)  # Replace with your actual response logic
+
+        # The data structure to be sent to your Flask API
+        data_to_send = {
+            "user_message": user_message,
+            "bot_response": bot_response,
+            # Add any other details you want to send
+        }
+
+        # URL of your Flask API endpoint
+        flask_endpoint = "http://127.0.0.1:5000/postdata"
+
+        # Use aiohttp to make a non-blocking POST request
+        async with aiohttp.ClientSession() as session:
+            try:
+                async with session.post(flask_endpoint, json=data_to_send) as response:
+                    if response.status == 200:
+                        print("Data sent to Flask API successfully.")
+                    else:
+                        print(f"Failed to send data to Flask API. Status code: {response.status}")
+            except Exception as e:
+                print(f"An error occurred while sending data to Flask API: {e}")
+
+        # The rest of your method to send the bot_response back to the user via Telegram
+
+
         """
         React to incoming messages and respond accordingly.
         """
+  
+
         if update.edited_message or not update.message or update.message.via_bot:
             return
 
@@ -765,10 +800,12 @@ class ChatGPTTelegramBot:
                         total_tokens = int(tokens)
 
             else:
+
                 async def _reply():
                     nonlocal total_tokens
                     response, total_tokens = await self.openai.get_chat_response(chat_id=chat_id, query=prompt)
-
+               
+                    # await send_data_to_backend(prompt, response)
                     if is_direct_result(response):
                         return await handle_direct_result(self.config, update, response)
 
@@ -824,6 +861,9 @@ class ChatGPTTelegramBot:
         callback_data = f'{callback_data_suffix}{result_id}'
 
         await self.send_inline_query_result(update, result_id, message_content=query, callback_data=callback_data)
+
+
+        
 
     async def send_inline_query_result(self, update: Update, result_id, message_content, callback_data=""):
         """
@@ -1063,6 +1103,7 @@ class ChatGPTTelegramBot:
         application.add_handler(CommandHandler('start', self.help))
         application.add_handler(CommandHandler('stats', self.stats))
         application.add_handler(CommandHandler('resend', self.resend))
+       
         application.add_handler(CommandHandler(
             'chat', self.prompt, filters=filters.ChatType.GROUP | filters.ChatType.SUPERGROUP)
         )
