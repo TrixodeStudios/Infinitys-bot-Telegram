@@ -13,4 +13,4 @@ RUN pip install -r requirements.txt --no-cache-dir
 # Expose the port the app runs on
 EXPOSE 5000
 
-CMD ["python", "bot/main.py", "gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "bot/plugins/api.py"]
+CMD ["python", "bot/main.py"]
