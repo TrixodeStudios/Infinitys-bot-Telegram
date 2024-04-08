@@ -661,7 +661,11 @@ class ChatGPTTelegramBot:
         }
 
         # URL of your Flask API endpoint
+<<<<<<< Updated upstream
         flask_endpoint = "api-production-a8e7.up.railway.app/postdata"
+=======
+        flask_endpoint = "http://127.0.0.1:5000/postdata"
+>>>>>>> Stashed changes
 
         # Use aiohttp to make a non-blocking POST request
         async with aiohttp.ClientSession() as session:
@@ -801,6 +805,70 @@ class ChatGPTTelegramBot:
 
             else:
 
+<<<<<<< Updated upstream
+=======
+# AQUI
+# AQUI
+# AQUI
+
+# v
+
+# AQUI
+# v
+# AQUI
+# v
+# v
+# v
+# v
+# v
+# v
+# v
+# v
+# v
+# v
+# v
+# v
+            # v
+# v
+# v
+# v
+# v
+                # async def send_data_to_backend(user_message, ai_response):
+                #     url = '/api/send-data'  # Replace with your actual backend URL
+                #     data_to_send = {
+                #         "user_message": user_message,
+                #         "ai_response": ai_response
+                #           }
+                #     async with aiohttp.ClientSession() as session:
+                #         await session.post('https://c6d5cd30ee68.ngrok.app', json=data_to_send)
+                #         print("Data sent to backend successfully.")
+
+    #                     async def send_data_to_backend(self, user_message, ai_response):
+    # url = 'http://localhost:5000/api/send-data'  # Update this URL to your Flask backend's actual URL
+    # data = {
+    #     'user_message': user_message,
+    #     'ai_response': ai_response
+    # }
+    # async with aiohttp.ClientSession() as session:
+    #     await session.post(url, json=data)
+
+# v
+# v
+# v
+# v
+# v
+# v
+# v
+# v
+# v
+# v
+# v
+# v
+# v
+# v
+# v
+# v
+>>>>>>> Stashed changes
                 async def _reply():
                     nonlocal total_tokens
                     response, total_tokens = await self.openai.get_chat_response(chat_id=chat_id, query=prompt)
