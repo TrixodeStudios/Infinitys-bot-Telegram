@@ -661,11 +661,8 @@ class ChatGPTTelegramBot:
         }
 
         # URL of your Flask API endpoint
-<<<<<<< Updated upstream
         flask_endpoint = "api-production-a8e7.up.railway.app/postdata"
-=======
-        flask_endpoint = "http://127.0.0.1:5000/postdata"
->>>>>>> Stashed changes
+      
 
         # Use aiohttp to make a non-blocking POST request
         async with aiohttp.ClientSession() as session:
